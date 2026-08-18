@@ -1,0 +1,54 @@
+hostname {{ hostname }}
+!
+ip routing
+!
+{% for vlan in vlans %}
+vlan {{ vlan.id }}
+ name {{ vlan.name }}
+{% endfor %}
+!
+{% for svi in svis %}
+interface vlan {{ svi.vlan }}
+ ip address {{ svi.ip }} {{ svi.mask }}
+ ip helper-address {{ svi.helper }}
+ standby {{ svi.vrrp_group }} ip {{ svi.vrrp_ip }}
+ standby {{ svi.vrrp_group }} priority {{ svi.vrrp_priority }}
+ standby {{ svi.vrrp_group }} preempt
+ no shutdown
+!
+{% endfor %}
+interface {{ etherchannel.members }}
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk allowed vlan {{ etherchannel.allowed_vlans }}
+ channel-group {{ etherchannel.group }} mode active
+!
+interface port-channel {{ etherchannel.group }}
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk allowed vlan {{ etherchannel.allowed_vlans }}
+!
+{% for tp in trunk_ports %}
+interface {{ tp.port }}
+ description {{ tp.desc }}
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk allowed vlan {{ tp.allowed_vlans }}
+{% endfor %}
+!
+{% for link in routed_links %}
+interface {{ link.port }}
+ description {{ link.desc }}
+ no switchport
+ ip address {{ link.ip }} {{ link.mask }}
+ no shutdown
+!
+{% endfor %}
+!
+router ospf {{ ospf.process }}
+ router-id {{ ospf.router_id }}
+{% for net in ospf.networks %}
+ network {{ net }}
+{% endfor %}
+!
+end

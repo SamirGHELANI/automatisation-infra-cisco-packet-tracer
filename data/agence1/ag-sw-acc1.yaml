@@ -1,0 +1,44 @@
+
+type: switch-l2               
+hostname: AG1-SW-ACC1
+
+# IP de management  
+mgmt_vlan: 130
+mgmt_ip: 172.16.18.10
+mgmt_mask: 255.255.255.0
+mgmt_gateway: 172.16.18.1
+
+# Les VLANs à créer sur le switch
+vlans:
+  - id: 110
+    name: Users
+  - id: 120
+    name: Voix
+  - id: 130
+    name: Management
+
+# Les ports d'accès (end-devices)
+access_ports:
+  - range: "range fastEthernet 0/1 - 10"
+    vlan: 110
+    desc: Postes utilisateurs
+  - range: "range fastEthernet 0/11 - 16"
+    vlan: 120
+    desc: Telephones IP
+  - range: "fastEthernet 0/24"
+    vlan: 130
+    desc: Management
+
+# Les ports trunk (vers les switches L3)
+trunk_ports:
+  - port: "gigabitEthernet 0/1"
+    desc: Uplink vers AG1-SW-L3a
+    allowed_vlans: "110,120,130"
+  - port: "gigabitEthernet 0/2"
+    desc: Uplink vers AG1-SW-L3b
+    allowed_vlans: "110,120,130"
+
+# Les ports à désactiver (inutilisés)
+shutdown_ports:
+  - range: "range fastEthernet 0/17 - 23"
+    desc: Ports inutilises

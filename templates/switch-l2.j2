@@ -1,0 +1,35 @@
+hostname {{ hostname }}
+!
+{% for vlan in vlans %}
+vlan {{ vlan.id }}
+ name {{ vlan.name }}
+{% endfor %}
+!
+{% for ap in access_ports %}
+interface {{ ap.range }}
+ description {{ ap.desc }}
+ switchport mode access
+ switchport access vlan {{ ap.vlan }}
+ spanning-tree portfast
+{% endfor %}
+!
+{% for tp in trunk_ports %}
+interface {{ tp.port }}
+ description {{ tp.desc }}
+ switchport mode trunk
+ switchport trunk allowed vlan {{ tp.allowed_vlans }}
+{% endfor %}
+!
+{% for sp in shutdown_ports %}
+interface {{ sp.range }}
+ description {{ sp.desc }}
+ shutdown
+{% endfor %}
+!
+interface vlan {{ mgmt_vlan }}
+ ip address {{ mgmt_ip }} {{ mgmt_mask }}
+ no shutdown
+!
+ip default-gateway {{ mgmt_gateway }}
+!
+end
