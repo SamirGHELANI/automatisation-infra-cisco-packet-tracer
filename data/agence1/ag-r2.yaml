@@ -1,0 +1,28 @@
+type: router
+hostname: AG1-R2
+
+interfaces:
+  - port: "fastEthernet 0/0/0"
+    desc: Liaison vers AG1-SW-L3b
+    ip: 172.16.19.6
+    mask: 255.255.255.252
+  - port: "fastEthernet 0/0/1"
+    desc: Liaison vers AG1-SW-L3a
+    ip: 172.16.19.14
+    mask: 255.255.255.252
+  - port: "fastEthernet 0/0/2"
+    desc: Liaison vers AG1-R1
+    ip: 172.16.19.10
+    mask: 255.255.255.252
+  - port: "gigabitEthernet 0/0"
+    desc: WAN vers ISP-AG
+    ip: 200.0.0.5
+    mask: 255.255.255.252
+
+ospf:
+  process: 1
+  router_id: 4.4.4.4
+  networks:
+    - "172.16.19.4 0.0.0.3 area 1"
+    - "172.16.19.12 0.0.0.3 area 1"
+    - "172.16.19.8 0.0.0.3 area 1"
